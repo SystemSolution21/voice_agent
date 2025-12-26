@@ -72,48 +72,96 @@ voice-assistant-agent/
 ├── voice-assistant-agent/
 │   ├── backend/              # Python implementation (FastAPI)
 │   │   ├── src/
-│   │   │   ├── main.py              # FastAPI server & pipeline
+│   │   │   ├── __init__.py         # Python package initialization
 │   │   │   ├── assemblyai_stt.py   # AssemblyAI STT integration
+│   │   │   ├── cartesia_prompts.py # TTS-optimized prompts
 │   │   │   ├── cartesia_tts.py     # Cartesia TTS integration
 │   │   │   ├── elevenlabs_tts.py   # ElevenLabs TTS (alternative)
 │   │   │   ├── events.py           # Event type definitions
-│   │   │   ├── cartesia_prompts.py # TTS-optimized prompts
+│   │   │   ├── main.py             # FastAPI server & pipeline
 │   │   │   └── utils.py            # Utility functions
+│   │   │
 │   │   ├── pyproject.toml          # Python dependencies
+│   │   ├── python-version          # Python version
+│   │   ├── README.md               # Backend documentation
 │   │   └── uv.lock                 # Locked dependencies
 │   │
 │   ├── frontend/             # TypeScript implementation (Hono)
 │   │   ├── src/
+│   │   │   ├── assemblyai/         # AssemblyAI integration
+│   │   │   │   ├── api-types.ts    # AssemblyAI API types
+│   │   │   │   ├── index.ts        # AssemblyAI exports
+│   │   │   │   └── stt.ts          # STT transform implementation
+│   │   │   │
+│   │   │   ├── cartesia/           # Cartesia integration
+│   │   │   │   ├── api-types.ts    # Cartesia API types
+│   │   │   │   ├── index.ts        # Cartesia exports
+│   │   │   │   ├── prompts.ts      # TTS-optimized prompts
+│   │   │   │   └── tts.ts          # TTS transform implementation
+│   │   │   │
+│   │   │   ├── elevenlabs/         # ElevenLabs integration
+│   │   │   │   ├── api-types.ts    # ElevenLabs API types
+│   │   │   │   ├── index.ts        # ElevenLabs exports
+│   │   │   │   └── tts.ts          # TTS transform implementation
+│   │   │   │
 │   │   │   ├── index.ts            # Hono server & pipeline
 │   │   │   ├── types.ts            # TypeScript type definitions
-│   │   │   ├── utils.ts            # Utility functions
-│   │   │   ├── assemblyai/         # AssemblyAI integration
-│   │   │   ├── cartesia/           # Cartesia integration
-│   │   │   └── elevenlabs/         # ElevenLabs integration
-│   │   └── package.json            # Node.js dependencies
+│   │   │   └── utils.ts            # Utility functions
+│   │   │
+│   │   ├── .gitignore              # Version control ignore file
+│   │   ├── eslint.config.mjs       # ESLint configuration
+│   │   ├── package.json            # TypeScript dependencies
+│   │   ├── pnpm-lock.yaml          # Locked dependencies
+│   │   └── tsconfig.json           # TypeScript configuration
 │   │
 │   └── web/                  # Svelte web interface
+│       ├── node_modules/           # Svelte dependencies
 │       ├── src/
-│       │   ├── App.svelte          # Main application component
-│       │   ├── main.ts             # Application entry point
 │       │   ├── lib/
-│       │   │   ├── components/     # UI components
-│       │   │   │   ├── Header.svelte
-│       │   │   │   ├── Controls.svelte
-│       │   │   │   ├── PipelineCard.svelte
-│       │   │   │   ├── ActivityFeed.svelte
-│       │   │   │   ├── Console.svelte
-│       │   │   │   └── LatencyWaterfall.svelte
-│       │   │   ├── stores/         # Svelte stores for state
 │       │   │   ├── audio/          # Audio capture/playback
-│       │   │   ├── websocket.ts    # WebSocket client
-│       │   │   └── types.ts        # TypeScript types
-│       │   └── app.css             # Global styles
-│       └── package.json            # Web dependencies
+│       │   │   │   ├── capture.ts      # Microphone capture
+│       │   │   │   ├── index.ts        # Audio exports
+│       │   │   │   └── playback.ts     # Audio playback
+│       │   │   │
+│       │   │   ├── components/     # UI components
+│       │   │   │   ├── ActivityFeed.svelte     # Activity feed
+│       │   │   │   ├── Console.svelte          # Console logs
+│       │   │   │   ├── Controls.svelte         # Start/stop buttons
+│       │   │   │   ├── Header.svelte           # Header
+│       │   │   │   ├── index.ts                # Component exports
+│       │   │   │   ├── LatencyWaterfall.svelte # Latency waterfall
+│       │   │   │   ├── Pipeline.svelte         # Pipeline visualization
+│       │   │   │   └── PipelineCard.svelte     # Pipeline card
+│       │   │   │
+│       │   │   ├── stores/         # Svelte stores for state
+│       │   │   │   ├── activity.ts     # Activity feed store
+│       │   │   │   ├── index.ts        # Store exports
+│       │   │   │   ├── pipeline.ts     # Pipeline state store
+│       │   │   │   └── session.ts      # Session state store
+│       │   │   │
+│       │   │   ├── types.ts        # TypeScript types
+│       │   │   ├── utils.ts        # Utility functions
+│       │   │   └── websocket.ts    # WebSocket client
+│       │   │
+│       │   ├── app.css             # Global styles
+│       │   ├── App.svelte          # Main application component
+│       │   └── main.ts             # Application entry point
+│       │
+│       ├── .gitignore              # Version control ignore file
+│       ├── index.html              # HTML entry point
+│       ├── package.json            # Web dependencies
+│       ├── pnpm-lock.yaml          # Locked dependencies
+│       ├── svelte.config.js        # Svelte configuration
+│       ├── tsconfig.json           # TypeScript configuration
+│       └── vite.config.ts          # Vite configuration
 │
-├── Makefile                  # Build and development commands
+├── .env                      # Environment variables (ignored by git)
+├── .env.example              # Example environment file
+├── .gitignore                # Version control ignore file
+├── .prettierignore           # Prettier ignore file
 ├── LICENSE.txt               # MIT License
-└── README.md                 # This file
+├── Makefile                  # Build and development commands
+└── README.md                 # Project documentation
 ```
 
 ## 🚀 Getting Started
