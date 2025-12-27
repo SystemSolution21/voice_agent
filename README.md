@@ -84,7 +84,7 @@ voice_agent/
 │   │   │   │   └── utils.py            # Utility functions
 │   │   │   │
 │   │   │   ├── pyproject.toml          # Python dependencies
-│   │   │   ├── python-version          # Python version
+│   │   │   ├── .python-version          # Python version
 │   │   │   ├── README.md               # Backend documentation
 │   │   │   └── uv.lock                 # Locked dependencies
 │   │   │
@@ -554,6 +554,9 @@ RUN pip install uv
 # Copy backend files
 COPY voice-agent/backend /app/backend
 COPY voice-agent/frontend/web/dist /app/frontend/web/dist
+
+# Set working directory to backend/python
+WORKDIR /app/backend/python
 
 # Install dependencies
 RUN uv sync --no-dev
