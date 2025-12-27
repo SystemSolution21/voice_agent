@@ -571,6 +571,9 @@ CMD ["uv", "run", "src/main.py"]
 **Build and run:**
 
 ```bash
+# Approved the build script security features
+pnpm approve-builds
+
 # Build web assets first
 make build-web
 
