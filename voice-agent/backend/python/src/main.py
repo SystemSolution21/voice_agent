@@ -1,8 +1,9 @@
-# voice-assistant-agent/backend/src/main.py
+# voice-agent/backend/python/src/main.py
 
 # Import built-in libraries
 import asyncio
 import contextlib
+import os
 from pathlib import Path
 from typing import AsyncIterator
 from uuid import uuid4
@@ -15,6 +16,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from langchain.agents import create_agent
 from langchain.messages import AIMessage, HumanMessage, ToolMessage
 from langchain_core.runnables import RunnableGenerator
+from langchain_ollama import ChatOllama
 from langgraph.checkpoint.memory import InMemorySaver
 from starlette.staticfiles import StaticFiles
 
@@ -35,7 +37,7 @@ from utils import merge_async_iters
 load_dotenv()
 
 # Static files are served from the shared web build output
-STATIC_DIR = Path(__file__).parent.parent.parent / "web" / "dist"
+STATIC_DIR = Path(__file__).parent.parent.parent.parent / "frontend" / "web" / "dist"
 
 if not STATIC_DIR.exists():
     raise RuntimeError(
@@ -75,8 +77,17 @@ Available cheeses: swiss, cheddar, provolone.
 ${CARTESIA_TTS_SYSTEM_PROMPT}
 """
 
+# agent = create_agent(
+#     model="anthropic:claude-haiku-4-5",
+#     tools=[add_to_order, confirm_order],
+#     system_prompt=system_prompt,
+#     checkpointer=InMemorySaver(),
+# )
+
+ollama_model = os.getenv("OLLAMA_MODEL", "llama3.2:latest")
+ollama_url = os.getenv("OLLAMA_URL", "http://localhost:11434")
 agent = create_agent(
-    model="anthropic:claude-haiku-4-5",
+    model=ChatOllama(model=ollama_model, base_url=ollama_url),
     tools=[add_to_order, confirm_order],
     system_prompt=system_prompt,
     checkpointer=InMemorySaver(),
