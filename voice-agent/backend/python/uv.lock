@@ -795,7 +795,7 @@ wheels = [
 ]
 
 [[package]]
-name = "voice-assistant-agent"
+name = "voice-agent"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [

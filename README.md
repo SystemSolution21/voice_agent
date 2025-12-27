@@ -1,4 +1,4 @@
-# Voice Assistant Agent
+# Voice Agent
 
 A real-time, voice-to-voice AI pipeline featuring an intelligent assistant agent. Built with LangChain/LangGraph agents, AssemblyAI for speech-to-text, and Cartesia for text-to-speech.
 
@@ -68,92 +68,96 @@ The pipeline uses typed events for communication between stages:
 ## 📁 Project Structure
 
 ```text
-voice-assistant-agent/
-├── voice-assistant-agent/
-│   ├── backend/              # Python implementation (FastAPI)
-│   │   ├── src/
-│   │   │   ├── __init__.py         # Python package initialization
-│   │   │   ├── assemblyai_stt.py   # AssemblyAI STT integration
-│   │   │   ├── cartesia_prompts.py # TTS-optimized prompts
-│   │   │   ├── cartesia_tts.py     # Cartesia TTS integration
-│   │   │   ├── elevenlabs_tts.py   # ElevenLabs TTS (alternative)
-│   │   │   ├── events.py           # Event type definitions
-│   │   │   ├── main.py             # FastAPI server & pipeline
-│   │   │   └── utils.py            # Utility functions
+voice_agent/
+├── voice-agent/
+│   ├── backend/              
+│   │   ├── python/              # Python implementation (FastAPI)
+│   │   │   ├── .venv/                # Python virtual environment
+│   │   │   ├── src/
+│   │   │   │   ├── __init__.py         # Python package initialization
+│   │   │   │   ├── assemblyai_stt.py   # AssemblyAI STT integration
+│   │   │   │   ├── cartesia_prompts.py # TTS-optimized prompts
+│   │   │   │   ├── cartesia_tts.py     # Cartesia TTS integration
+│   │   │   │   ├── elevenlabs_tts.py   # ElevenLabs TTS (alternative)
+│   │   │   │   ├── events.py           # Event type definitions
+│   │   │   │   ├── main.py             # FastAPI server & pipeline
+│   │   │   │   └── utils.py            # Utility functions
+│   │   │   │
+│   │   │   ├── pyproject.toml          # Python dependencies
+│   │   │   ├── python-version          # Python version
+│   │   │   ├── README.md               # Backend documentation
+│   │   │   └── uv.lock                 # Locked dependencies
 │   │   │
-│   │   ├── pyproject.toml          # Python dependencies
-│   │   ├── python-version          # Python version
-│   │   ├── README.md               # Backend documentation
-│   │   └── uv.lock                 # Locked dependencies
+│   │   └── typescript/             # TypeScript implementation (Hono)
+│   │       ├── node_modules/           # TypeScript dependencies
+│   │       ├── src/
+│   │       │   ├── assemblyai/         # AssemblyAI integration
+│   │       │   │   ├── api-types.ts    # AssemblyAI API types
+│   │       │   │   ├── index.ts        # AssemblyAI exports
+│   │       │   │   └── stt.ts          # STT transform implementation
+│   │       │   │
+│   │       │   ├── cartesia/           # Cartesia integration
+│   │       │   │   ├── api-types.ts    # Cartesia API types
+│   │       │   │   ├── index.ts        # Cartesia exports
+│   │       │   │   ├── prompts.ts      # TTS-optimized prompts
+│   │       │   │   └── tts.ts          # TTS transform implementation
+│   │       │   │
+│   │       │   ├── elevenlabs/         # ElevenLabs integration
+│   │       │   │   ├── api-types.ts    # ElevenLabs API types
+│   │       │   │   ├── index.ts        # ElevenLabs exports
+│   │       │   │   └── tts.ts          # TTS transform implementation
+│   │       │   │
+│   │       │   ├── index.ts            # Hono server & pipeline
+│   │       │   ├── types.ts            # TypeScript type definitions
+│   │       │   └── utils.ts            # Utility functions
+│   │       │
+│   │       ├── .gitignore              # Version control ignore file
+│   │       ├── eslint.config.mjs       # ESLint configuration
+│   │       ├── package.json            # TypeScript dependencies
+│   │       ├── pnpm-lock.yaml          # Locked dependencies
+│   │       └── tsconfig.json           # TypeScript configuration
 │   │
-│   ├── frontend/             # TypeScript implementation (Hono)
-│   │   ├── src/
-│   │   │   ├── assemblyai/         # AssemblyAI integration
-│   │   │   │   ├── api-types.ts    # AssemblyAI API types
-│   │   │   │   ├── index.ts        # AssemblyAI exports
-│   │   │   │   └── stt.ts          # STT transform implementation
-│   │   │   │
-│   │   │   ├── cartesia/           # Cartesia integration
-│   │   │   │   ├── api-types.ts    # Cartesia API types
-│   │   │   │   ├── index.ts        # Cartesia exports
-│   │   │   │   ├── prompts.ts      # TTS-optimized prompts
-│   │   │   │   └── tts.ts          # TTS transform implementation
-│   │   │   │
-│   │   │   ├── elevenlabs/         # ElevenLabs integration
-│   │   │   │   ├── api-types.ts    # ElevenLabs API types
-│   │   │   │   ├── index.ts        # ElevenLabs exports
-│   │   │   │   └── tts.ts          # TTS transform implementation
-│   │   │   │
-│   │   │   ├── index.ts            # Hono server & pipeline
-│   │   │   ├── types.ts            # TypeScript type definitions
-│   │   │   └── utils.ts            # Utility functions
-│   │   │
-│   │   ├── .gitignore              # Version control ignore file
-│   │   ├── eslint.config.mjs       # ESLint configuration
-│   │   ├── package.json            # TypeScript dependencies
-│   │   ├── pnpm-lock.yaml          # Locked dependencies
-│   │   └── tsconfig.json           # TypeScript configuration
-│   │
-│   └── web/                  # Svelte web interface
-│       ├── node_modules/           # Svelte dependencies
-│       ├── src/
-│       │   ├── lib/
-│       │   │   ├── audio/          # Audio capture/playback
-│       │   │   │   ├── capture.ts      # Microphone capture
-│       │   │   │   ├── index.ts        # Audio exports
-│       │   │   │   └── playback.ts     # Audio playback
-│       │   │   │
-│       │   │   ├── components/     # UI components
-│       │   │   │   ├── ActivityFeed.svelte     # Activity feed
-│       │   │   │   ├── Console.svelte          # Console logs
-│       │   │   │   ├── Controls.svelte         # Start/stop buttons
-│       │   │   │   ├── Header.svelte           # Header
-│       │   │   │   ├── index.ts                # Component exports
-│       │   │   │   ├── LatencyWaterfall.svelte # Latency waterfall
-│       │   │   │   ├── Pipeline.svelte         # Pipeline visualization
-│       │   │   │   └── PipelineCard.svelte     # Pipeline card
-│       │   │   │
-│       │   │   ├── stores/         # Svelte stores for state
-│       │   │   │   ├── activity.ts     # Activity feed store
-│       │   │   │   ├── index.ts        # Store exports
-│       │   │   │   ├── pipeline.ts     # Pipeline state store
-│       │   │   │   └── session.ts      # Session state store
-│       │   │   │
-│       │   │   ├── types.ts        # TypeScript types
-│       │   │   ├── utils.ts        # Utility functions
-│       │   │   └── websocket.ts    # WebSocket client
-│       │   │
-│       │   ├── app.css             # Global styles
-│       │   ├── App.svelte          # Main application component
-│       │   └── main.ts             # Application entry point
-│       │
-│       ├── .gitignore              # Version control ignore file
-│       ├── index.html              # HTML entry point
-│       ├── package.json            # Web dependencies
-│       ├── pnpm-lock.yaml          # Locked dependencies
-│       ├── svelte.config.js        # Svelte configuration
-│       ├── tsconfig.json           # TypeScript configuration
-│       └── vite.config.ts          # Vite configuration
+│   └── frontend/
+│       └── web/                  # Svelte web interface
+│           ├── node_modules/           # Svelte dependencies
+│           ├── src/
+│           │   ├── lib/
+│           │   │   ├── audio/          # Audio capture/playback
+│           │   │   │   ├── capture.ts      # Microphone capture
+│           │   │   │   ├── index.ts        # Audio exports
+│           │   │   │   └── playback.ts     # Audio playback
+│           │   │   │
+│           │   │   ├── components/     # UI components
+│           │   │   │   ├── ActivityFeed.svelte     # Activity feed
+│           │   │   │   ├── Console.svelte          # Console logs
+│           │   │   │   ├── Controls.svelte         # Start/stop buttons
+│           │   │   │   ├── Header.svelte           # Header
+│           │   │   │   ├── index.ts                # Component exports
+│           │   │   │   ├── LatencyWaterfall.svelte # Latency waterfall
+│           │   │   │   ├── Pipeline.svelte         # Pipeline visualization
+│           │   │   │   └── PipelineCard.svelte     # Pipeline card
+│           │   │   │
+│           │   │   ├── stores/         # Svelte stores for state
+│           │   │   │   ├── activity.ts     # Activity feed store
+│           │   │   │   ├── index.ts        # Store exports
+│           │   │   │   ├── pipeline.ts     # Pipeline state store
+│           │   │   │   └── session.ts      # Session state store
+│           │   │   │
+│           │   │   ├── types.ts        # TypeScript types
+│           │   │   ├── utils.ts        # Utility functions
+│           │   │   └── websocket.ts    # WebSocket client
+│           │   │
+│           │   ├── app.css             # Global styles
+│           │   ├── App.svelte          # Main application component
+│           │   └── main.ts             # Application entry point
+│           │
+│           ├── .gitignore              # Version control ignore file
+│           ├── index.html              # HTML entry point
+│           ├── package.json            # Web dependencies
+│           ├── pnpm-lock.yaml          # Locked dependencies
+│           ├── svelte.config.js        # Svelte configuration
+│           ├── tsconfig.json           # TypeScript configuration
+│           └── vite.config.ts          # Vite configuration
 │
 ├── .env                      # Environment variables (ignored by git)
 ├── .env.example              # Example environment file
@@ -182,7 +186,7 @@ voice-assistant-agent/
 
    ```bash
    git clone <repository-url>
-   cd voice-assistant-agent
+   cd voice-agent
    ```
 
 2. **Set up environment variables**
@@ -304,9 +308,9 @@ The Python backend uses **FastAPI** with async/await for high-performance WebSoc
 - **`events.py`**: Dataclass definitions for all event types
 - **`utils.py`**: Helper functions for async stream merging
 
-#### Frontend (TypeScript)
+#### Backend (TypeScript)
 
-The TypeScript frontend uses **Hono** (lightweight web framework) with similar architecture:
+The TypeScript backend uses **Hono** (lightweight web framework) with similar architecture:
 
 - **`index.ts`**: Core server with streaming pipeline stages
 - **`assemblyai/`**: AssemblyAI integration with TypeScript types
@@ -343,7 +347,7 @@ Modern reactive UI built with **Svelte 5** and **TailwindCSS**:
 
 The default agent is a sandwich shop assistant. To customize:
 
-**Python (`voice-assistant-agent/backend/src/main.py`):**
+**Python (`voice-agent/backend/python/src/main.py`):**
 
 ```python
 # Define your tools
@@ -367,7 +371,7 @@ agent = create_agent(
 )
 ```
 
-**TypeScript (`voice-assistant-agent/frontend/src/index.ts`):**
+**TypeScript (`voice-agent/backend/typescript/src/index.ts`):**
 
 ```typescript
 // Define your tools
@@ -499,7 +503,7 @@ The project structure supports adding tests:
 **Python:**
 
 ```bash
-cd voice-assistant-agent/backend
+cd voice-agent/backend/python
 # Add pytest to dev dependencies
 uv add --dev pytest pytest-asyncio
 # Create tests/ directory and add test files
@@ -508,7 +512,7 @@ uv add --dev pytest pytest-asyncio
 **TypeScript:**
 
 ```bash
-cd voice-assistant-agent/frontend
+cd voice-agent/backend/typescript
 # Add testing framework
 pnpm add -D vitest @vitest/ui
 # Create tests/ directory and add test files
@@ -548,10 +552,8 @@ WORKDIR /app
 RUN pip install uv
 
 # Copy backend files
-COPY voice-assistant-agent/backend /app/backend
-COPY voice-assistant-agent/web/dist /app/web/dist
-
-WORKDIR /app/backend
+COPY voice-agent/backend /app/backend
+COPY voice-agent/frontend/web/dist /app/frontend/web/dist
 
 # Install dependencies
 RUN uv sync --no-dev
@@ -570,10 +572,10 @@ CMD ["uv", "run", "src/main.py"]
 make build-web
 
 # Build Docker image
-docker build -t voice-assistant-agent .
+docker build -t voice-agent .
 
 # Run container
-docker run -p 8000:8000 --env-file .env voice-assistant-agent
+docker run -p 8000:8000 --env-file .env voice-agent
 ```
 
 ### Cloud Deployment Options

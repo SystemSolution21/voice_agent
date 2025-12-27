@@ -1,5 +1,5 @@
 [project]
-name = "voice-assistant-agent"
+name = "voice-agent"
 version = "0.1.0"
 description = "A real-time, voice-to-voice AI pipeline featuring assistant agent. Built with LangChain/LangGraph agents, AssemblyAI for speech-to-text, and Cartesia for text-to-speech."
 readme = "README.md"
