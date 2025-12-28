@@ -1,8 +1,13 @@
-import "dotenv/config";
+import { config } from "dotenv";
 import { fileURLToPath } from "node:url";
 import { existsSync } from "node:fs";
 import { createAgent, AIMessage, ToolMessage } from "langchain";
 import path from "node:path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+config({ path: path.join(__dirname, "../../../../.env") });
+
 import { Hono } from "hono";
 import { serve } from "@hono/node-server";
 import { serveStatic } from "@hono/node-server/serve-static";
@@ -19,10 +24,9 @@ import { v4 as uuidv4 } from "uuid";
 import { CARTESIA_TTS_SYSTEM_PROMPT, CartesiaTTS } from "./cartesia";
 import { AssemblyAISTT } from "./assemblyai/index";
 import type { VoiceAgentEvent } from "./types";
+import { ChatOllama } from "@langchain/ollama";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const STATIC_DIR = path.join(__dirname, "../../web/dist");
+const STATIC_DIR = path.join(__dirname, "../../../frontend/web/dist");
 const PORT = parseInt(process.env.PORT ?? "8000");
 
 if (!existsSync(STATIC_DIR)) {
@@ -76,8 +80,21 @@ Available cheeses: swiss, cheddar, provolone.
 ${CARTESIA_TTS_SYSTEM_PROMPT}
 `;
 
+// const agent = createAgent({
+//     model: "claude-haiku-4-5",
+//     tools: [addToOrder, confirmOrder],
+//     checkpointer: new MemorySaver(),
+//     systemPrompt: systemPrompt,
+// });
+
+const ollamaModel = process.env.OLLAMA_MODEL ?? "llama3.2:latest";
+const ollamaUrl = process.env.OLLAMA_URL ?? "http://localhost:11434";
+
 const agent = createAgent({
-    model: "claude-haiku-4-5",
+    model: new ChatOllama({
+        model: ollamaModel,
+        baseUrl: ollamaUrl,
+    }),
     tools: [addToOrder, confirmOrder],
     checkpointer: new MemorySaver(),
     systemPrompt: systemPrompt,
