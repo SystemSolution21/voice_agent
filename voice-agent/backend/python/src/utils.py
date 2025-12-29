@@ -51,14 +51,17 @@ async def merge_async_iters(*aiters: AsyncIterator[T]) -> AsyncIterator[T]:
             await queue.put(item)
         await queue.put(sentinel)
 
-    async with asyncio.TaskGroup() as tg:
-        for aiter in aiters:
-            tg.create_task(producer(aiter))
+    try:
+        async with asyncio.TaskGroup() as tg:
+            for aiter in aiters:
+                tg.create_task(producer(aiter))
 
-        finished = 0
-        while finished < len(aiters):
-            item = await queue.get()
-            if item is sentinel:
-                finished += 1
-            else:
-                yield item
+            finished = 0
+            while finished < len(aiters):
+                item = await queue.get()
+                if item is sentinel:
+                    finished += 1
+                else:
+                    yield item
+    except asyncio.CancelledError:
+        return

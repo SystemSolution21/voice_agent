@@ -3,6 +3,7 @@
 # Import built-in libraries
 import asyncio
 import contextlib
+import logging
 import os
 import sys
 from pathlib import Path
@@ -36,6 +37,10 @@ from events import (
     event_to_dict,
 )
 from utils import merge_async_iters
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Load environment variables from .env file
 load_dotenv()
@@ -330,10 +335,10 @@ async def websocket_endpoint(websocket: WebSocket):
                 data = await websocket.receive_bytes()
                 yield data
         except WebSocketDisconnect:
-            print("Client disconnected from audio stream.")
+            logger.info("Disconnected from audio stream.")
             return
         except Exception as e:
-            print(f"Unexpected Error in audio stream: {e}")
+            logger.info(f"Unexpected Error in audio stream: {e}")
             return
 
     output_stream = pipeline.atransform(websocket_audio_stream())

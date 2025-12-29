@@ -16,7 +16,7 @@ install-ts:
 	cd $(TS_BACKEND_DIR) && pnpm install
 
 install-py:
-	cd $(PY_BACKEND_DIR) && uv sync --dev
+	cd $(PY_BACKEND_DIR) && VIRTUAL_ENV= uv sync --dev
 
 ##= Web Build
 
@@ -38,7 +38,7 @@ dev-py:
 	@echo "Starting web build watcher and backend server..."
 	@trap 'kill 0' EXIT; \
 		(cd $(WEB_DIR) && pnpm build --watch) & \
-		sleep 2 && cd $(PY_BACKEND_DIR) && uv run src/main.py
+		sleep 2 && cd $(PY_BACKEND_DIR) && VIRTUAL_ENV= uv run src/main.py
 
 ##= Server Only
 
@@ -46,7 +46,7 @@ start-ts: build-web
 	cd $(TS_BACKEND_DIR) && pnpm run server
 
 start-py: build-web
-	cd $(PY_BACKEND_DIR) && uv run src/main.py
+	cd $(PY_BACKEND_DIR) && VIRTUAL_ENV= uv run src/main.py
 
 ##= Utilities
 
