@@ -37,7 +37,7 @@ Audio Input → STT → Agent → TTS → Audio Output
 
 3. **Agent Processing** - LangChain/LangGraph
    - Receives final transcripts
-   - Processes with Claude Haiku 4.5 model
+   - Processes with Claude Haiku 4.5 / Ollama llama3.2:latest model
    - Executes tool calls when needed
    - Maintains conversation context with memory checkpointer
    - Streams response tokens in real-time
@@ -84,7 +84,7 @@ voice_agent/
 │   │   │   │   └── utils.py            # Utility functions
 │   │   │   │
 │   │   │   ├── pyproject.toml          # Python dependencies
-│   │   │   ├── .python-version          # Python version
+│   │   │   ├── .python-version         # Python version
 │   │   │   ├── README.md               # Backend documentation
 │   │   │   └── uv.lock                 # Locked dependencies
 │   │   │

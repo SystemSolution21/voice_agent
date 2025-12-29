@@ -4,6 +4,7 @@
 import asyncio
 import contextlib
 import os
+import sys
 from pathlib import Path
 from typing import AsyncIterator
 from uuid import uuid4
@@ -15,10 +16,13 @@ from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from langchain.agents import create_agent
 from langchain.messages import AIMessage, HumanMessage, ToolMessage
+from langchain_anthropic import ChatAnthropic
 from langchain_core.runnables import RunnableGenerator
 from langchain_ollama import ChatOllama
 from langgraph.checkpoint.memory import InMemorySaver
+from pydantic import SecretStr
 from starlette.staticfiles import StaticFiles
+from starlette.websockets import WebSocketDisconnect
 
 # Import local modules
 from assemblyai_stt import AssemblyAISTT
@@ -45,6 +49,34 @@ if not STATIC_DIR.exists():
         "Run 'make build-web' or 'make dev-py' from the project root."
     )
 
+# Configure LLM model
+ollama_llm: str | None = os.getenv(key="OLLAMA_LLM")
+ollama_url: str | None = os.getenv(key="OLLAMA_URL", default="http://localhost:11434")
+anthropic_llm: str | None = os.getenv(key="ANTHROPIC_LLM")
+anthropic_api_key: str | None = os.getenv(key="ANTHROPIC_API_KEY")
+
+ollama_configured: str | None = ollama_llm and ollama_url
+anthropic_configured: str | None = anthropic_llm and anthropic_api_key
+
+if not ollama_configured and not anthropic_configured:
+    raise RuntimeError(
+        "Neither Anthropic (ANTHROPIC_API_KEY, ANTHROPIC_LLM) nor OLLAMA_LLM is configured."
+        "Please check your .env file. Note: Ollama llm model should be locally installed."
+    )
+    sys.exit(1)
+
+if ollama_configured:
+    model = ChatOllama(model=str(object=ollama_llm), base_url=ollama_url)
+elif anthropic_configured:
+    model = ChatAnthropic(
+        model_name=str(anthropic_llm),
+        api_key=SecretStr(secret_value=str(object=anthropic_api_key)),
+        temperature=0.0,
+        timeout=None,
+        stop=None,
+    )
+
+# Create FastAPI app
 app = FastAPI()
 
 app.add_middleware(
@@ -56,16 +88,19 @@ app.add_middleware(
 )
 
 
+# Define add order tools
 def add_to_order(item: str, quantity: int) -> str:
     """Add an item to the customer's sandwich order."""
     return f"Added {quantity} x {item} to the order."
 
 
+# Define confirm order tools
 def confirm_order(order_summary: str) -> str:
     """Confirm the final order with the customer."""
     return f"Order confirmed: {order_summary}. Sending to kitchen."
 
 
+# Set llm system prompt
 system_prompt = """
 You are a helpful sandwich shop assistant. Your goal is to take the user's order.
 Be concise and friendly.
@@ -77,17 +112,9 @@ Available cheeses: swiss, cheddar, provolone.
 ${CARTESIA_TTS_SYSTEM_PROMPT}
 """
 
-# agent = create_agent(
-#     model="anthropic:claude-haiku-4-5",
-#     tools=[add_to_order, confirm_order],
-#     system_prompt=system_prompt,
-#     checkpointer=InMemorySaver(),
-# )
-
-ollama_model = os.getenv("OLLAMA_MODEL", "llama3.2:latest")
-ollama_url = os.getenv("OLLAMA_URL", "http://localhost:11434")
+# Create LangChain agent
 agent = create_agent(
-    model=ChatOllama(model=ollama_model, base_url=ollama_url),
+    model=model,
     tools=[add_to_order, confirm_order],
     system_prompt=system_prompt,
     checkpointer=InMemorySaver(),
@@ -298,9 +325,16 @@ async def websocket_endpoint(websocket: WebSocket):
 
     async def websocket_audio_stream() -> AsyncIterator[bytes]:
         """Async generator that yields audio bytes from the websocket."""
-        while True:
-            data = await websocket.receive_bytes()
-            yield data
+        try:
+            while True:
+                data = await websocket.receive_bytes()
+                yield data
+        except WebSocketDisconnect:
+            print("Client disconnected from audio stream.")
+            return
+        except Exception as e:
+            print(f"Unexpected Error in audio stream: {e}")
+            return
 
     output_stream = pipeline.atransform(websocket_audio_stream())
 
