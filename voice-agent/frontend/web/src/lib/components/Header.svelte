@@ -1,11 +1,13 @@
 <script lang="ts">
-  import { session, formattedTime } from '../stores';
+  import { session, formattedTime } from "../stores";
 </script>
 
 <header class="flex items-center justify-between mb-7">
   <div class="flex items-center gap-3">
     <span class="text-3xl">🥪</span>
-    <h1 class="text-2xl font-semibold tracking-tight text-gray-900">Voice Sandwich</h1>
+    <h1 class="text-2xl font-semibold tracking-tight text-gray-900">
+      Voice Curry
+    </h1>
   </div>
   <div class="flex items-center gap-2 font-mono text-sm text-gray-400">
     <span>{$formattedTime}</span>
@@ -16,4 +18,3 @@
     ></span>
   </div>
 </header>
-

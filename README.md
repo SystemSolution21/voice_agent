@@ -345,7 +345,7 @@ Modern reactive UI built with **Svelte 5** and **TailwindCSS**:
 
 ### Changing the Agent Behavior
 
-The default agent is a sandwich shop assistant. To customize:
+The default agent is a curry restaurant assistant. To customize:
 
 **Python (`voice-agent/backend/python/src/main.py`):**
 
@@ -492,7 +492,7 @@ Both Python and TypeScript backends log important events:
 
 1. Start the application
 2. Test basic conversation flow
-3. Test tool calling (e.g., "I'd like a turkey sandwich with lettuce")
+3. Test tool calling (e.g., "I'd like a mild butter chicken curry with cheese naan.")
 4. Test error handling (disconnect during conversation)
 5. Monitor latency in the waterfall visualization
 
@@ -631,7 +631,7 @@ Example event:
 ```json
 {
   "type": "stt_output",
-  "transcript": "I'd like a turkey sandwich",
+  "transcript": "I'd like a turkey curry",
   "ts": 1703001234567
 }
 ```

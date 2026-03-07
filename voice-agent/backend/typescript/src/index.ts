@@ -48,7 +48,7 @@ const addToOrder = tool(
     },
     {
         name: "add_to_order",
-        description: "Add an item to the customer's sandwich order.",
+        description: "Add an item to the customer's curry order.",
         schema: z.object({
             item: z.string(),
             quantity: z.number(),
@@ -70,7 +70,7 @@ const confirmOrder = tool(
 );
 
 const systemPrompt = `
-You are a helpful sandwich shop assistant. Your goal is to take the user's order.
+You are a helpful curry restaurant assistant. Your goal is to take the user's order.
 Be concise and friendly.
 
 Available toppings: lettuce, tomato, onion, pickles, mayo, mustard.
