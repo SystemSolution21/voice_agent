@@ -5,7 +5,6 @@ import asyncio
 import contextlib
 import logging
 import os
-import sys
 from pathlib import Path
 from typing import AsyncIterator
 from uuid import uuid4
@@ -68,7 +67,6 @@ if not ollama_configured and not anthropic_configured:
         "Neither Anthropic (ANTHROPIC_API_KEY, ANTHROPIC_LLM) nor OLLAMA_LLM is configured."
         "Please check your .env file. Note: Ollama llm model should be locally installed."
     )
-    sys.exit(1)
 
 if ollama_configured:
     model = ChatOllama(model=str(object=ollama_llm), base_url=ollama_url)
@@ -80,6 +78,8 @@ elif anthropic_configured:
         timeout=None,
         stop=None,
     )
+else:
+    raise RuntimeError("No LLM model could be configured.")
 
 # Create FastAPI app
 app = FastAPI()
