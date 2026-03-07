@@ -4,7 +4,7 @@
 
 <header class="flex items-center justify-between mb-7">
   <div class="flex items-center gap-3">
-    <span class="text-3xl">🥪</span>
+    <span class="text-3xl">🍛</span>
     <h1 class="text-2xl font-semibold tracking-tight text-gray-900">
       Voice Curry
     </h1>
