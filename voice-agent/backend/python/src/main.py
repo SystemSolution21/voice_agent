@@ -93,6 +93,49 @@ app.add_middleware(
 )
 
 
+# Define menu items tool
+def menu_items() -> dict[str, dict[str, int] | list[str]]:
+    """Return a list of menu items."""
+
+    menu: dict[str, dict[str, int] | list[str]] = {
+        "curries": {
+            "chicken": 780,
+            "mutton": 880,
+            "daal": 780,
+            "vegetable": 780,
+            "butter chicken": 980,
+            "seafood": 880,
+            "palak paneer": 760,
+            "chana masala": 840,
+        },
+        "spices_levels": ["mild", "medium", "hot", "extra hot"],
+        "rice": {
+            "plain rice": 300,
+            "basmati rice": 600,
+            "jeera rice": 500,
+            "biryani": 1500,
+        },
+        "breads": {
+            "naan": 380,
+            "garlic naan": 480,
+            "cheese naan": 580,
+            "roti": 380,
+            "paratha": 480,
+        },
+        "appetizers": {
+            "salad": 600,
+            "samosas": 600,
+            "pakoda": 600,
+            "momo": 600,
+        },
+        "alacart": {
+            "tandori chicken": 650,
+            "kebabs": 650,
+        },
+    }
+    return menu
+
+
 # Define add order tools
 def add_to_order(item: str, quantity: int) -> str:
     """Add an item to the customer's curry order."""
@@ -108,14 +151,9 @@ def confirm_order(order_summary: str) -> str:
 # Set llm system prompt
 system_prompt = """
 You are a helpful Indian curry restaurant assistant. Your goal is to take the user's order.
+Please use the menu_items tool to get the list of available menu items.
+Price is in Japanese Yen.
 Be concise and friendly.
-
-Available curries: chicken, mutton, daal, vegetable, butter chicken, seafood, palak paneer, chana masala.
-Available rice: basmati rice, jeera rice, biryani.
-Available breads: naan, garlic naan, cheese naan, roti, paratha.
-Available spice levels: mild, medium, hot, extra hot.
-Available appetizers: salad, raita, papadum, pickle, samosas.
-Available alacart items: tandori chicken, kebabs.
 
 ${CARTESIA_TTS_SYSTEM_PROMPT}
 """
@@ -123,7 +161,7 @@ ${CARTESIA_TTS_SYSTEM_PROMPT}
 # Create LangChain agent
 agent = create_agent(
     model=model,
-    tools=[add_to_order, confirm_order],
+    tools=[menu_items, add_to_order, confirm_order],
     system_prompt=system_prompt,
     checkpointer=InMemorySaver(),
 )
