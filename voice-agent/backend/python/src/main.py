@@ -94,7 +94,7 @@ app.add_middleware(
 
 
 # Define menu items tool
-def menu_items() -> dict[str, dict[str, int] | list[str]]:
+def menu_items() -> str:
     """Return a list of menu items."""
 
     menu: dict[str, dict[str, int] | list[str]] = {
@@ -133,7 +133,7 @@ def menu_items() -> dict[str, dict[str, int] | list[str]]:
             "kebabs": 650,
         },
     }
-    return menu
+    return f"Available menu items: {menu}"
 
 
 # Define add order tools
